@@ -23,6 +23,37 @@ def f(i):
   return i, time.time()
 
 
+def fast_version(result_ids, start_time):
+  # Get one batch of tasks. Instead of waiting for a fixed subset of tasks, we
+  # should instead use the first 3 tasks that finish.
+  initial_results, result_ids = ray.wait(result_ids, num_returns=3)
+  initial_results = ray.get(initial_results)
+  print(initial_results)
+  
+  end_time = time.time()
+  duration = end_time - start_time
+  
+  # Wait for the remaining tasks to complete.
+  remaining_results, _ = ray.wait(result_ids, num_returns=3)
+  remaining_results = ray.get(remaining_results)
+  duration2 = time.time() - start_time
+  print(remaining_results)
+  print('FAST duration', duration)
+  print('FAST duration2', duration2)
+  return initial_results, remaining_results, duration
+
+
+def slow_version(result_ids, start_time):
+  results = ray.get(result_ids)
+  print(results)
+  
+  end_time = time.time()
+  duration = end_time - start_time
+  print('SLOW duration', duration)
+  
+  return results, duration
+
+
 def main():
   ray.init(redirect_output=True, num_cpus=6)
   
@@ -33,21 +64,8 @@ def main():
   # This launches 6 tasks, each of which takes a random amount of time to
   # complete.
   result_ids = [f.remote(i) for i in range(6)]
-  # Get one batch of tasks. Instead of waiting for a fixed subset of tasks, we
-  # should instead use the first 3 tasks that finish.
-  initial_results, result_ids = ray.wait(result_ids, num_returns=3)
-  initial_results = ray.get(initial_results)
-  
-  end_time = time.time()
-  duration = end_time - start_time
-  
-  # Wait for the remaining tasks to complete.
-  remaining_results, _ = ray.wait(result_ids, num_returns=3)
-  remaining_results = ray.get(remaining_results)
-  duration2 = time.time() - end_time
-  print(remaining_results)
-  print('duration', duration)
-  print('duration2', duration2)
+  initial_results, remaining_results, duration = fast_version(result_ids, start_time)
+  slow_version(result_ids, start_time)
   
   assert len(initial_results) == 3
   assert len(remaining_results) == 3
