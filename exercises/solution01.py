@@ -42,12 +42,13 @@ def main():
 	# EXERCISE:
 	results, duration = measure_duration()
 	assert results == [0, 1, 2, 3], 'Did you remember to call ray.get?'
-	assert duration < 1.1, ('The loop took {} seconds. This is too slow.'.format(duration))
-	assert duration > 1, ('The loop took {} seconds. This is too fast.'.format(duration))
+  assert duration < 1.1, ('The loop took {} seconds. This is too slow.'.format(duration))
+  assert duration > 1, ('The loop took {} seconds. This is too fast.'.format(duration))
 	print('Success! The example took {} seconds.'.format(duration))
-	
-	# EXERCISE:
-	# Look assets/solution01.png
+
+
+# EXERCISE:
+# Look assets/solution01.png
 
 
 if __name__ == '__main__':
