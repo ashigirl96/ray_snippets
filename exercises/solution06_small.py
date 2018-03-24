@@ -3,12 +3,13 @@ from __future__ import division
 from __future__ import print_function
 
 import ray
+import numpy as np
 
 ray.init(redirect_output=True)
 
 @ray.remote
 def f():
-  return 1
+  return np.random.uniform(0, 1)
 
 
 # Start 5 tasks.
@@ -20,7 +21,4 @@ for _ in range(10):
   # Get the available object and do something with it.
   print(ray.get(ready_ids))
   # Start a new task.
-  print(remaining_ids)
-  # remaining_ids.append(f.remote())
-  print(remaining_ids)
-  print("Finished")
+  remaining_ids.append(f.remote())
