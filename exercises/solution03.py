@@ -26,7 +26,6 @@ def aggregate_data(x, y):
 
 
 def main():
-  # ray.init('192.168.12.3:6349', redirect_output=True, num_cpus=8)
   ray.init(redirect_output=True, num_cpus=8)
   
   # Sleep a little to improve the accuracy of the timing measurements below.
@@ -45,7 +44,14 @@ def main():
   result = aggregate_data.remote(result, vectors[6])
   result = aggregate_data.remote(result, vectors[7])
   result1 = ray.get(result)
-
+  
+  end_time = time.time()
+  duration = end_time - start_time
+  print('Success! The example took {} seconds.'.format(duration))
+  
+  time.sleep(2.0)
+  start_time = time.time()
+  
   while len(vectors) > 1:
     vectors.append(aggregate_data.remote(vectors.pop(0), vectors.pop(0)))
   result2 = ray.get(vectors)

@@ -19,6 +19,7 @@ import ray
 def f(i):
   np.random.seed(5 + i)
   x = np.random.uniform(0, 4)
+  # x = 4
   time.sleep(x)
   return i, time.time()
 
@@ -65,7 +66,7 @@ def main():
   # complete.
   result_ids = [f.remote(i) for i in range(6)]
   initial_results, remaining_results, duration = fast_version(result_ids, start_time)
-  slow_version(result_ids, start_time)
+  # slow_version(result_ids, start_time)
   
   assert len(initial_results) == 3
   assert len(remaining_results) == 3
