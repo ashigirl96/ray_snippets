@@ -8,6 +8,7 @@ import gym
 import numpy as np
 
 
+
 def sample_policy(state):
   return 0 if state[0] < 0 else 1
 
